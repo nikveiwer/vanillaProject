@@ -2,7 +2,7 @@ import modals from "./modals.js"
 
 const forms = () => {
 
-    const windowInfo = {};
+    let windowInfo = {};
 
     const form = document.querySelectorAll("form"),
                  input = document.querySelectorAll("input"),
@@ -49,8 +49,18 @@ const forms = () => {
             //     name: form.elements.user_name.value,
             //     phone: form.elements.user_phone.value
             // }
+            let formData; 
+            if (Object.getOwnPropertyNames(windowInfo).length != 0) {
+                formData = new FormData(form);
+                for (let key in windowInfo) {
+                    formData.append(key, windowInfo[key]);
+                } 
+            } else {
+                formData = new FormData(form);
+            }
 
-            const formData = new FormData(form);
+            // const formData = new FormData(form);
+            
             // const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             let status = document.createElement("div");
@@ -65,7 +75,7 @@ const forms = () => {
             .then(data => {
                 status.textContent = message.success;
                 console.log(data);
-                
+                windowInfo = {};
             }).catch(() => {
                 status.textContent = message.failure;
             }).finally(() => {
@@ -111,9 +121,8 @@ const forms = () => {
                 sizeInputs.forEach(input => {
                     input.value = "";
                     input.style.borderColor = "#ccc";
-                })
+                });
 
-                console.log(windowInfo);
             } else {
                 fieldsWasntFilled(".popup_calc");
                 if (sizeInputs[0].value == "") {
@@ -135,30 +144,39 @@ const forms = () => {
     function getCalcProfileInformation() {
         const selectForm = document.querySelector("#view_type");
         const selectBtn = document.querySelector(".popup_calc_profile_button");
-        const checkboxes = document.querySelectorAll(".checkbox-custom");
-        const coldCheckBird = document.querySelector(".checkbox-custom[id='cold']::before");
-        const warmCheckBird = document.querySelector("checkbox-custom::before");
+        const checkboxes = document.querySelectorAll(".checkbox");
 
-        // toggleCheckboxes("cold");
 
-        console.log(coldCheckBird);
-        console.log(warmCheckBird);
+        checkboxes[0].checked = true;
+       
+
+        switchCheckboxes();
+
 
         selectBtn.addEventListener("click", () => {
             windowInfo.glassType = selectForm.value;
-            
+            if (checkboxes[0].checked === true) {
+                windowInfo.glassTemperatureType = checkboxes[0].nextElementSibling.nextElementSibling.textContent;
+            } else {
+                windowInfo.glassTemperatureType = checkboxes[1].nextElementSibling.nextElementSibling.textContent;
+            }
         });
 
+        function switchCheckboxes() {
+            checkboxes.forEach((checkbox, i, array) => {
+                checkbox.addEventListener("click" ,(e) => {
+                    if (e.target == checkbox) {
+                        array.forEach(item => {item.checked = false;});
+                        checkbox.checked = true;
+                        windowInfo.glassTemperatureType = checkbox.nextElementSibling.nextElementSibling.textContent;
+                       
+                    }
+                });
+            });
+    
+        }
 
-        // function toggleCheckboxes(id) {
-        //     coldCheckBird.display = "none";
-        //     warmCheckBird.display = "none";
-        //     checkboxes.forEach(check => {
-        //         if (check.getAttribute("id") == id) {
-        //             check.classList.add(`checkbox-custom[id=${id}]::before`);
-        //         }
-        //     })
-        // }
+
     }
 
     function fieldsWasntFilled(modalSelector) {
