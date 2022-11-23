@@ -3,6 +3,7 @@ import modals from "./modules/modals.js";
 import  tabs from "./modules/tabs.js";
 import forms from "./modules/forms.js";
 import timer from "./modules/timer";
+import images from "./modules/images.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     let deadline = "2023-02-01";
@@ -13,6 +14,8 @@ window.addEventListener("DOMContentLoaded", () => {
     tabs('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', "inline-block");
     forms();
     timer(".containe1", deadline);
+    images();
+    
 
 });
 
